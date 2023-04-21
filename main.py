@@ -41,7 +41,6 @@ def strategy_get():
             "last_executed":strategy["last_executed"],
             "activation": strategy["activation"]
         }
-        print(data)
         return jsonify(data)
     
 @app.route('/strategy', methods = ['POST'])
