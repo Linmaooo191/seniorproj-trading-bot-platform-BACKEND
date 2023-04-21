@@ -1,4 +1,7 @@
 import requests
+from datetime import datetime, timedelta
+import pytz
+from connection import collection_order
 
 def get_token():
     headers = {
@@ -29,4 +32,12 @@ def execute_order(token, side, vol, symbol, price):
     }
 
     response = requests.post("https://cloud.uipath.com/tradibmbgugp/DefaultTenant/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", headers=headers, json=body)
+    thaiTz = pytz.timezone('Asia/Bangkok') 
+    now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
+    collection_order.insert_one({"side":side,
+                                 "symbol":symbol,
+                                 "volume":vol,
+                                 "price":price,
+                                 "order_executed":now
+                                 })
     print(response.json())
