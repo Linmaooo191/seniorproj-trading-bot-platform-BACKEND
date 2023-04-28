@@ -32,7 +32,7 @@ def execute_order(side, vol, symbol, price):
       "ReleaseKey": "fb31ca2f-9ffd-44be-b8a6-7d8498ada728",
       "JobsCount": 1,
       "Strategy": "ModernJobsCount",
-      "InputArguments": "{\"id\":\""+id+"\",\"in_side\":\""+side+"\",\"in_vol\":"+str(vol)+",\"in_symbol\":\""+symbol+"\",\"in_price\":\""+str(price)+"\",\"token\":\""+get_token()+"\"}"
+      "InputArguments": "{\"id\":\""+str(id)+"\",\"in_side\":\""+side+"\",\"in_vol\":"+str(vol)+",\"in_symbol\":\""+symbol+"\",\"in_price\":\""+str(price)+"\",\"token\":\""+get_token()+"\"}"
       }
     }
     response = requests.post("https://cloud.uipath.com/tradibmbgugp/DefaultTenant/odata/Jobs/UiPath.Server.Configuration.OData.StartJobs", headers=headers, json=body)
