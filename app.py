@@ -60,5 +60,16 @@ def code_execute():
         collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
         return "Trading Bot code executed"
 
+@app.route('/order_time', methods = ['POST'])
+def order_time():
+    if(request.method == 'POST'):
+        last_document = collection_order.find_one(sort=[("_id", -1)])
+        id = request.args.get('id',last_document["id"])
+        print(id)
+        thaiTz = pytz.timezone('Asia/Bangkok') 
+        now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
+        collection_order.update_one({"id":int(id)}, {"$set":{"order_finished":now}})
+        return "save order finished time for id" + str(id)
+    
 if __name__ == '__main__':
     app.run()
