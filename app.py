@@ -19,6 +19,7 @@ def code_execute():
     try:
         compiled_code = compile(code_string, '<string>', 'exec')
         exec(compiled_code)
+        print("execute code complete")
         now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
         collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
     except SyntaxError as se:
