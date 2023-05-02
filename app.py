@@ -4,13 +4,36 @@ import pytz
 
 from flask import Flask,jsonify,request
 from flask_cors import CORS
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 import requests
 from connection import collection_strategy, collection_code
 from dotenv import dotenv_values
 from trader import *
 
+thaiTz = pytz.timezone('Asia/Bangkok') 
+
+
+def code_execute():
+    code_string = collection_code.find_one()["code"]
+    exec(code_string)
+    now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
+    collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
+
+def code_execute_check():
+    activation = collection_strategy.find_one()['activation']
+    if activation == True:
+        code_execute()
+
 app = Flask(__name__)
 CORS(app)
+
+scheduler = BackgroundScheduler(daemon=True)
+
+trigger = CronTrigger(hour=16, minute=15, day_of_week='0-4', timezone=thaiTz)
+scheduler.add_job(code_execute_check, trigger)
+
+scheduler.start()
 
 @app.route('/code', methods = ['GET'])
 def code_get():
@@ -51,14 +74,10 @@ def strategy_post():
         return "Toggle activation"
     
 @app.route('/bot_execute', methods = ['GET'])
-def code_execute():
+def apicode_execute():
     if(request.method == 'GET'):
-        code_string = collection_code.find_one()["code"]
-        exec(code_string)
-        thaiTz = pytz.timezone('Asia/Bangkok') 
-        now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
-        collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
-        return "Trading Bot code executed"
+        code_execute()
+        return "Code executed"
 
 @app.route('/order_time', methods = ['POST'])
 def order_time():
@@ -72,4 +91,4 @@ def order_time():
         return "save order finished time for id" + str(id)
     
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)
