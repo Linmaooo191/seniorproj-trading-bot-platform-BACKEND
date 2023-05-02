@@ -1,11 +1,13 @@
 import os, time
 from datetime import datetime, timedelta
 import pytz
-
 from flask import Flask,jsonify,request
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+import yfinance as yf
+import pandas as pd
+from ta.momentum import RSIIndicator
 import requests
 from connection import collection_strategy, collection_code
 from dotenv import dotenv_values
@@ -13,19 +15,18 @@ from trader import *
 
 thaiTz = pytz.timezone('Asia/Bangkok') 
 
-
 def code_execute():
+    exec_globals = {
+        'yf': yf,
+        'pd': pd,
+        'RSIIndicator': RSIIndicator,
+        'execute_order': execute_order
+    }
     code_string = collection_code.find_one()["code"]
-    try:
-        compiled_code = compile(code_string, '<string>', 'exec')
-        exec(compiled_code)
-        print("execute code complete")
-        now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
-        collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
-    except SyntaxError as se:
-        print(f"SyntaxError: {se}")
-    except Exception as e:
-        print(f"RuntimeError: {e}")
+    print(code_string)
+    exec(code_string, exec_globals)
+    now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
+    collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
 
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
@@ -98,4 +99,4 @@ def order_time():
         return "save order finished time for id" + str(id)
     
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
