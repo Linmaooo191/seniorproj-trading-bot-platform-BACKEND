@@ -16,10 +16,15 @@ thaiTz = pytz.timezone('Asia/Bangkok')
 
 def code_execute():
     code_string = collection_code.find_one()["code"]
-    print(code_string)
-    exec(code_string)
-    now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
-    collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
+    try:
+        compiled_code = compile(code_string, '<string>', 'exec')
+        exec(compiled_code)
+        now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
+        collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
+    except SyntaxError as se:
+        print(f"SyntaxError: {se}")
+    except Exception as e:
+        print(f"RuntimeError: {e}")
 
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
