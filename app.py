@@ -14,6 +14,7 @@ from dotenv import dotenv_values
 from trader import *
 
 thaiTz = pytz.timezone('Asia/Bangkok') 
+time_list = [10, 11, 12, 15, 16]
 
 def code_execute():
     exec_globals = {
@@ -33,13 +34,19 @@ def code_execute_check():
     if activation == True:
         code_execute()
 
+def log_something():
+    print("something")
+
 app = Flask(__name__)
 CORS(app)
 
 scheduler = BackgroundScheduler(daemon=True)
 
-trigger = CronTrigger(hour=16, minute=15, day_of_week='0-4', timezone=thaiTz)
-scheduler.add_job(code_execute_check, trigger)
+trigger = CronTrigger(hour=17, minute=0, timezone=thaiTz)
+scheduler.add_job(log_something, trigger)
+#for hour in time_list:
+#    trigger = CronTrigger(hour=hour, minute=15, day_of_week='0-4', timezone=thaiTz)
+#    scheduler.add_job(code_execute_check, trigger)
 
 scheduler.start()
 
@@ -99,4 +106,4 @@ def order_time():
         return "save order finished time for id" + str(id)
     
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
