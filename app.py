@@ -12,11 +12,12 @@ import requests
 from connection import collection_strategy, collection_code
 from dotenv import dotenv_values
 from trader import *
+import threading
 
 thaiTz = pytz.timezone('Asia/Bangkok') 
 time_list = [10, 11, 12, 15, 16]
 
-def code_execute():
+def code_execute_thread():
     exec_globals = {
         'yf': yf,
         'pd': pd,
@@ -29,10 +30,14 @@ def code_execute():
     collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
     print("Code done executed")
 
+def code_execute():
+    thread = threading.Thread(target=code_execute_thread)
+    thread.start()
+
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
     if activation == True:
-        code_execute()
+        code_execute_thread()
 
 def log_something():
     print("something")
