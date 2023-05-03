@@ -47,4 +47,4 @@ def execute_order(side, vol, symbol, price):
                                  "order_executed":now,
                                  "order_finished":""
                                  })
-    print(response.json())
+    print("Sending request to RPA system.")

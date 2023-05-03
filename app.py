@@ -24,7 +24,6 @@ def code_execute():
         'execute_order': execute_order
     }
     code_string = collection_code.find_one()["code"]
-    print(code_string)
     exec(code_string, exec_globals)
     now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
     collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
