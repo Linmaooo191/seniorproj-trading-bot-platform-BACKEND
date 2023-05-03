@@ -53,6 +53,30 @@ for hour in time_list:
 
 scheduler.start()
 
+@app.route("/")
+def main_url():
+    return "Welcome to FLASK for trading bot platform!"
+
+@app.route("/logs")
+def show_logs():
+    # Set your Papertrail API token
+    papertrail_api_token = dotenv_values(".env")["PAPERTRAIL_API_TOKEN"]
+
+    headers = {
+        "X-Papertrail-Token": papertrail_api_token,
+    }
+    url = "https://papertrailapp.com/api/v1/events/search.json"
+
+    # Fetch the last 50 lines of logs from Papertrail
+    response = requests.get(url, headers=headers, params={"limit": 30})
+    response.raise_for_status()
+    logs = response.json()["events"]
+
+    # Format the logs as text
+    logs_text = "\n".join([f"{log['received_at']} {log['source_name']} {log['program']}: {log['message']}" for log in logs])
+
+    return logs_text.replace("\n", "<br>")
+
 @app.route('/code', methods = ['GET'])
 def code_get():
     if(request.method == 'GET'):
