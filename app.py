@@ -28,6 +28,7 @@ def code_execute():
     exec(code_string, exec_globals)
     now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
     collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
+    print("Code done executed")
 
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
@@ -42,11 +43,9 @@ CORS(app)
 
 scheduler = BackgroundScheduler(daemon=True)
 
-trigger = CronTrigger(hour=17, minute=10, timezone=thaiTz)
-scheduler.add_job(log_something, trigger)
-#for hour in time_list:
-#    trigger = CronTrigger(hour=hour, minute=15, day_of_week='0-4', timezone=thaiTz)
-#    scheduler.add_job(code_execute_check, trigger)
+for hour in time_list:
+    trigger = CronTrigger(hour=hour, minute=15, day_of_week='0-4', timezone=thaiTz)
+    scheduler.add_job(code_execute_check, trigger)
 
 scheduler.start()
 
