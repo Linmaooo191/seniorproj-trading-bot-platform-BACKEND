@@ -42,7 +42,7 @@ CORS(app)
 
 scheduler = BackgroundScheduler(daemon=True)
 
-trigger = CronTrigger(hour=17, minute=0, timezone=thaiTz)
+trigger = CronTrigger(hour=17, minute=10, timezone=thaiTz)
 scheduler.add_job(log_something, trigger)
 #for hour in time_list:
 #    trigger = CronTrigger(hour=hour, minute=15, day_of_week='0-4', timezone=thaiTz)
