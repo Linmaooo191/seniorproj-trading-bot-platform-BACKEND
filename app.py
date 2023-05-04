@@ -80,7 +80,7 @@ def show_logs():
     }
     url = "https://papertrailapp.com/api/v1/events/search.json"
 
-    response = requests.get(url, headers=headers, params={"q": '-("GET" OR "POST")'})
+    response = requests.get(url, headers=headers, params={"limit": 100, "q": '-("GET" OR "POST")'})
 
     response.raise_for_status()
     logs = response.json()["events"]
