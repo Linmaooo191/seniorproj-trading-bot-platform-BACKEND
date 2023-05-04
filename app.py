@@ -49,7 +49,7 @@ def code_execute():
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
     if activation == True:
-        print("code executed by schedule")
+        print("[Code executed by schedule.")
         code_execute_thread()
 
 def log_something():
@@ -130,7 +130,7 @@ def strategy_post():
 @app.route('/bot_execute', methods = ['GET'])
 def apicode_execute():
     if(request.method == 'GET'):
-        print("code execute manually")
+        print("[Code execute manually.]")
         code_execute()
         return "Code executed"
 
@@ -142,7 +142,7 @@ def order_time():
         thaiTz = pytz.timezone('Asia/Bangkok') 
         now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
         collection_order.update_one({"id":int(id)}, {"$set":{"order_finished":now}})
-        print(f"[Order({id}) was placed]")
+        print(f"[Order({id}) was placed.]")
         return "save order finished time for id" + str(id)
     
 if __name__ == '__main__':
