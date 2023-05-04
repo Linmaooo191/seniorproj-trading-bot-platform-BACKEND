@@ -9,7 +9,7 @@ import yfinance as yf
 import pandas as pd
 from ta.momentum import RSIIndicator
 import requests
-from connection import collection_strategy, collection_code
+from connection import collection_strategy, collection_code, collection_portfolio
 from dotenv import dotenv_values
 from trader import *
 import threading
@@ -107,7 +107,22 @@ def code_post():
             collection_code.update_one({"name":"Trading Bot"}, {"$set":{"code":json['code']}})
             collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_saved":now}})
             return "save Trading Bot code"
-        
+
+@app.route('/portfolio', methods = ['GET'])
+def port_get():
+    if(request.method == 'GET'):
+        stocks = collection_portfolio.find()
+        datas = []
+        for stock in stocks:
+            datas.append({
+                "stock": stock["stock"], 
+                "amount": stock["amount"],
+                "market_price": stock["market_price"],
+                "purchased_price": stock["purchased_price"]
+            })
+        return jsonify(datas)
+
+
 @app.route('/strategy', methods = ['GET'])
 def strategy_get():
     if(request.method == 'GET'):
