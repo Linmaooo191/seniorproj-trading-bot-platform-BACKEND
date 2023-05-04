@@ -49,7 +49,7 @@ def code_execute():
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
     if activation == True:
-        print("execute code by schedule")
+        print("code executed by schedule")
         code_execute_thread()
 
 def log_something():
@@ -130,6 +130,7 @@ def strategy_post():
 @app.route('/bot_execute', methods = ['GET'])
 def apicode_execute():
     if(request.method == 'GET'):
+        print("code execute manually")
         code_execute()
         return "Code executed"
 
