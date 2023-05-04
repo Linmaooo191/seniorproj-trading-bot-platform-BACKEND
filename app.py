@@ -40,7 +40,7 @@ def code_execute_thread():
     exec(code_string, exec_globals)
     now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
     collection_strategy.update_one({"name":"Trading Bot"}, {"$set":{"last_executed":now}})
-    print("Code done executed")
+    print("[Code done executed.]")
 
 def code_execute():
     thread = threading.Thread(target=code_execute_thread)
@@ -49,7 +49,7 @@ def code_execute():
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
     if activation == True:
-        print("[Code executed by schedule.")
+        print("[Code executed by schedule.]")
         code_execute_thread()
 
 def log_something():
