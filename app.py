@@ -49,6 +49,7 @@ def code_execute():
 def code_execute_check():
     activation = collection_strategy.find_one()['activation']
     if activation == True:
+        print("execute code by schedule")
         code_execute_thread()
 
 def log_something():
@@ -79,7 +80,7 @@ def show_logs():
     }
     url = "https://papertrailapp.com/api/v1/events/search.json"
 
-    response = requests.get(url, headers=headers, params={"limit": 30, "q": '-("GET" OR "POST")'})
+    response = requests.get(url, headers=headers, params={"q": '-("GET" OR "POST")'})
 
     response.raise_for_status()
     logs = response.json()["events"]
