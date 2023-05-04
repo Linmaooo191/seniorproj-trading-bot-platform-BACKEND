@@ -47,4 +47,4 @@ def execute_order(side, vol, symbol, price):
                                  "order_executed":now,
                                  "order_finished":""
                                  })
-    print("Sending request to RPA system.")
+    print(f"[Sending request to RPA system. Order({id})[{side}, {symbol}, Vol: {vol}, Price: {price}] is currently being placed.]")

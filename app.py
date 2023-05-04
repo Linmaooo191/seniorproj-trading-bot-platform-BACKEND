@@ -139,10 +139,10 @@ def order_time():
     if(request.method == 'POST'):
         last_document = collection_order.find_one(sort=[("_id", -1)])
         id = request.args.get('id',last_document["id"])
-        print(id)
         thaiTz = pytz.timezone('Asia/Bangkok') 
         now = datetime.now(thaiTz).strftime("%m/%d/%Y, %H:%M:%S")
         collection_order.update_one({"id":int(id)}, {"$set":{"order_finished":now}})
+        print(f"[Order({id}) was placed]")
         return "save order finished time for id" + str(id)
     
 if __name__ == '__main__':
