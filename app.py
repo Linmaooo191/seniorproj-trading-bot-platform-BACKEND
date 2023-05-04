@@ -15,7 +15,19 @@ from trader import *
 import threading
 
 thaiTz = pytz.timezone('Asia/Bangkok') 
-time_list = [10, 11, 12, 15, 16]
+autotime_list = [10, 11, 12, 15, 16]
+
+def convert_date_format(input_string: str) -> str:
+    # Parse input string to a datetime object with timezone
+    input_datetime = datetime.fromisoformat(input_string)
+
+    # Convert to the desired timezone
+    output_datetime = input_datetime.astimezone(thaiTz)
+
+    # Format the output string
+    output_string = output_datetime.strftime("%Y-%m-%d T %H:%M:%S (GMT+7)")
+
+    return output_string
 
 def code_execute_thread():
     exec_globals = {
@@ -47,7 +59,7 @@ CORS(app)
 
 scheduler = BackgroundScheduler(daemon=True)
 
-for hour in time_list:
+for hour in autotime_list:
     trigger = CronTrigger(hour=hour, minute=15, day_of_week='0-4', timezone=thaiTz)
     scheduler.add_job(code_execute_check, trigger)
 
@@ -72,8 +84,7 @@ def show_logs():
     response.raise_for_status()
     logs = response.json()["events"]
 
-    # Format the logs as text
-    logs_text = "\n".join([f"{log['received_at']} : {log['message']}" for log in logs])
+    logs_text = "\n".join([f"{convert_date_format(log['received_at'])} : {log['message']}" for log in logs])
 
     return logs_text.replace("\n", "<br>")
 
